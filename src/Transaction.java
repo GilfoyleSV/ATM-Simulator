@@ -1,20 +1,21 @@
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+
 public class Transaction {
-    private final String type;
+    private final TransactionType type;
     private final BigDecimal amount;
     private final LocalDateTime timestamp;
     private final String details;
 
-    public Transaction(String type, BigDecimal amount, LocalDateTime timestamp, String details){
+    public Transaction(TransactionType type, BigDecimal amount, LocalDateTime timestamp, String details){
         this.amount = amount;
         this.type = type;
         this.timestamp = timestamp;
         this.details = details;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 

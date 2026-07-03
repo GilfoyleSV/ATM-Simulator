@@ -27,6 +27,14 @@ public class Account {
         return balance;
     }
 
+    public void addBalance(BigDecimal amount){
+        balance = balance.add(amount);
+    }
+
+    public void subtractBalance(BigDecimal amount){
+        balance = balance.subtract(amount);
+    }
+
     public void setBalance(BigDecimal balance){
         this.balance = balance;
     }
