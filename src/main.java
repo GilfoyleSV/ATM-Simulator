@@ -55,6 +55,8 @@ public class Main {
                             atm.deposit(currentAccount, amount);
                         } catch (NumberFormatException e) {
                             System.out.println("Ошибка: Введено некорректное число.");
+                        } catch (AccountNotFoundException | AmountException e) {
+                            System.out.println("Ошибка: " + e.getMessage());
                         }
                         break;
                     case "3":
@@ -65,6 +67,8 @@ public class Main {
                             atm.withdraw(currentAccount, amount);
                         } catch (NumberFormatException e) {
                             System.out.println("Ошибка: Введено некорректное число.");
+                        } catch (AccountNotFoundException | AmountException | InsufficientFundsException e) {
+                            System.out.println("Ошибка: " + e.getMessage());
                         }
                         break;
                     case "4":
@@ -77,6 +81,8 @@ public class Main {
                             atm.transfer(currentAccount, recipientId, amount);
                         } catch (NumberFormatException e) {
                             System.out.println("Ошибка: Введено некорректное число.");
+                        } catch (AccountNotFoundException | AmountException | InsufficientFundsException | IllegalArgumentException e) {
+                            System.out.println("Ошибка: " + e.getMessage());
                         }
                         break;
                     case "5":

@@ -9,67 +9,58 @@ public class ATMService{
         this.bank = bank;
     }
 
-    public void deposit(Account account, BigDecimal amount){
-        if (account == null){
-            System.out.println("Account does not exist");
-            return;
+    private void validateAccount(Account account) throws AccountNotFoundException {
+        if (account == null) {
+            throw new AccountNotFoundException("Аккаунт не существует.");
         }
-        if (amount.compareTo(BigDecimal.ZERO) <= 0){
-            System.out.println("Amount is negative");
-            return;
+    }
+
+    private void validateAmount(BigDecimal amount) throws AmountException {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AmountException("Сумма должна быть строго больше нуля.");
         }
+    }
+
+    private void validateBalance(Account account, BigDecimal amount) throws InsufficientFundsException {
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Недостаточно средств на счете.");
+        }
+    }
+
+    public void deposit(Account account, BigDecimal amount) 
+            throws AccountNotFoundException, AmountException {
+        validateAccount(account);
+        validateAmount(amount);
 
         account.addBalance(amount);
         Transaction newTransaction = new Transaction(TransactionType.DEPOSIT, amount, LocalDateTime.now(), "Пополнение счёта");
         account.addTransaction(newTransaction);
     }
 
-    public void withdraw(Account account, BigDecimal amount){
-        if (account == null){
-            System.out.println("Account does not exist");
-            return;
-        }
-
-        if (amount.compareTo(BigDecimal.ZERO) <= 0){
-            System.out.println("Amount is negative");
-            return;
-        }
-
-        if (account.getBalance().compareTo(amount) < 0){
-            System.out.println("Do not have enough money");
-            return;
-        }
+    public void withdraw(Account account, BigDecimal amount) 
+            throws AccountNotFoundException, AmountException, InsufficientFundsException {
+        validateAccount(account);
+        validateAmount(amount);
+        validateBalance(account, amount);
 
         account.subtractBalance(amount);
         Transaction newTransaction = new Transaction(TransactionType.WITHDRAWAL, amount, LocalDateTime.now(), "Снятие со счёта");
         account.addTransaction(newTransaction);
     }
 
-    public void transfer(Account sender, String recipientId, BigDecimal amount) {
-        if (sender == null) {
-            System.out.println("Sender account does not exist");
-            return;
-        }
-
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            System.out.println("Amount must be positive");
-            return;
-        }
-
-        if (sender.getBalance().compareTo(amount) < 0) {
-            System.out.println("Do not have enough money");
-            return;
-        }
+    public void transfer(Account sender, String recipientId, BigDecimal amount) 
+            throws AccountNotFoundException, AmountException, InsufficientFundsException {
+        validateAccount(sender);
+        validateAmount(amount);
+        validateBalance(sender, amount);
 
         Account recipient = bank.getAccount(recipientId);
         if (recipient == null) {
-            System.out.println("Recipient account not found");
-            return;
+            throw new AccountNotFoundException("Аккаунт получателя не найден.");
         }
 
         if (sender.getId().equals(recipientId)) {
-            System.out.println("Cannot transfer to the same account");
-            return;
+            throw new IllegalArgumentException("Нельзя перевести деньги на собственный счет.");
         }
 
         sender.subtractBalance(amount);
